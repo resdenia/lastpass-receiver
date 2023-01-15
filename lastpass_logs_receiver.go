@@ -268,7 +268,8 @@ func (slr *LastpassLogsReceiver) getLogs(lastPassApiKey string) ([]byte, error) 
 
 	lastTimeEvent := ""
 
-	customerId := "24116723"
+	// lastPassApiKey := os.Getenv("LASTPASS_KEY")
+	customerId := os.Getenv("CUSTOMER_ID")
 	enterpriseUrl := ""
 	arrtoSend := fmt.Sprintf(`{
 		"cid": %s,

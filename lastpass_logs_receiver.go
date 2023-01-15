@@ -133,7 +133,7 @@ const (
 	defaultApiVersion       = "55.0"
 )
 
-type lastpassLogsReceiver struct {
+type LastpassLogsReceiver struct {
 	securityToken           string
 	client                  http.Client
 	currentTimeMinusOneHour string
@@ -144,10 +144,10 @@ type SObjectToCollect struct {
 	LatestTimestamp string
 }
 
-func newLastpassLogsReceiver(
+func NewLastpassLogsReceiver(
 	url string,
 	securityToken string,
-) (*lastpassLogsReceiver, error) {
+) (*LastpassLogsReceiver, error) {
 	if securityToken == "" {
 		return nil, fmt.Errorf("security token must have a value")
 	}
@@ -156,7 +156,7 @@ func newLastpassLogsReceiver(
 
 	client := http.Client{}
 
-	return &lastpassLogsReceiver{
+	return &LastpassLogsReceiver{
 		securityToken:           securityToken,
 		client:                  client,
 		currentTimeMinusOneHour: currentTimeMinusOneHour,
@@ -253,7 +253,7 @@ func newLastpassLogsReceiver(
 // 	return logEvents, nil
 // }
 
-func (slr *lastpassLogsReceiver) getLogs(lastPassApiKey string) ([]byte, error) {
+func (slr *LastpassLogsReceiver) getLogs(lastPassApiKey string) ([]byte, error) {
 	// httpClient := &http.Client{}
 	// req, err := http.NewRequest("GET", fmt.Sprintf("%s%s", strings.TrimRight(slr.client.GetLoc(), "/"), apiPath), nil)
 	// req.Header.Add("Content-Type", "application/json; charset=UTF-8")
@@ -267,9 +267,7 @@ func (slr *lastpassLogsReceiver) getLogs(lastPassApiKey string) ([]byte, error) 
 	}
 
 	lastTimeEvent := ""
-	// lastPassApiKey := os.Getenv("LASTPASS_ENDPOINT")
-	// lastPassApiKey := os.Args[1]
-	// lastPassApiKey := "555c6671b3458297bf573ff0929b76d7c61f3b9523c195fb23c76cd68b90c9e9"
+
 	customerId := "24116723"
 	enterpriseUrl := ""
 	arrtoSend := fmt.Sprintf(`{

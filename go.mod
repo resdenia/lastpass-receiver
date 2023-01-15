@@ -1,4 +1,4 @@
-module github.com/logzio/lastPass-logs-receiver
+module github.com/resdenia/lastpass-receiver
 
 go 1.19
 

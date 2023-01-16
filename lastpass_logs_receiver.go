@@ -195,11 +195,15 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 			"to": "%s",
 		},
 		}`, customerId, lastPassApiKey, lastTimeEvent, time.Now())
-	requestBody := RequestBody{}
-	json.Unmarshal([]byte(arrtoSend), &requestBody)
+	// requestBody := RequestBody{}
+	// json.Unmarshal([]byte(arrtoSend), &requestBody)
 
 	payloadBuf := new(bytes.Buffer)
-	json.NewEncoder(payloadBuf).Encode(requestBody)
+	err := json.NewEncoder(payloadBuf).Encode([]byte(arrtoSend))
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	req, err := http.NewRequest(http.MethodPost, enterpriseUrl, payloadBuf)
 	if err != nil {
 		fmt.Println(err)

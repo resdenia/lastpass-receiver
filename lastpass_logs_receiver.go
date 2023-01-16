@@ -183,7 +183,7 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 	}
 
 	// lastPassApiKey := os.Getenv("LASTPASS_KEY")
-	customerId := os.Getenv("CUSTOMER_ID")
+	// customerId := os.Getenv("CUSTOMER_ID")
 	// LASTPASS_API_URL = "https://lastpass.com/enterpriseapi.php"
 
 	enterpriseUrl := os.Getenv("LASTPASS_URL")

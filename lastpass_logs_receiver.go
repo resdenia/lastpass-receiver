@@ -169,7 +169,7 @@ func NewLastPassLogsReceiver(
 	}, nil
 }
 
-func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent string) ([]LogToSend, error) {
+func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent string, customerId int) ([]LogToSend, error) {
 	// httpClient := &http.Client{}
 	// req, err := http.NewRequest("GET", fmt.Sprintf("%s%s", strings.TrimRight(slr.client.GetLoc(), "/"), apiPath), nil)
 	// req.Header.Add("Content-Type", "application/json; charset=UTF-8")
@@ -183,11 +183,11 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 	}
 
 	// lastPassApiKey := os.Getenv("LASTPASS_KEY")
-	customerId := os.Getenv("CUSTOMER_ID")
+	// customerId := os.Getenv("CUSTOMER_ID")
 	// LASTPASS_API_URL = "https://lastpass.com/enterpriseapi.php"
 
 	enterpriseUrl := os.Getenv("LASTPASS_URL")
-	arrtoSend := fmt.Sprintf(`{"cid": "%s","provhash": "%s","cmd": "reporting","data": {"from": "%s","to": "%s",},}`, customerId, lastPassApiKey, lastTimeEvent, time.Now())
+	arrtoSend := fmt.Sprintf(`{"cid": %d,"provhash": "%s","cmd": "reporting","data": {"from": "%s","to": "%s"}}`, customerId, lastPassApiKey, lastTimeEvent, time.Now())
 	// requestBody := RequestBody{}
 	// json.Unmarshal([]byte(arrtoSend), &requestBody)
 

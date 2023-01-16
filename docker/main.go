@@ -19,6 +19,7 @@ const (
 	envNameLastPassURL       = "LASTPASS_URL"
 	envNameFromTimestamp     = "FROM_TIMESTAMP"
 	envNameInterval          = "INTERVAL"
+	envNameCustomerId        = "CUSTOMER_ID"
 	envNameLogzioListenerURL = "LOGZIO_LISTENER_URL"
 	envNameLogzioToken       = "LOGZIO_TOKEN"
 	lastPassApiKey           = "LASTPASS_KEY"
@@ -156,8 +157,9 @@ func (sfc *lastPassCollector) sendDataToLogzio(data []byte) bool {
 
 func (sfc *lastPassCollector) collect(lastTime string) {
 	var waitGroup sync.WaitGroup
-
-	logsToSend, err := sfc.receiver.GetLogs(goDotEnvVariable(lastPassApiKey), lastTime)
+	customerIDStr := goDotEnvVariable(envNameCustomerId)
+	customerId, err := strconv.Atoi(customerIDStr)
+	logsToSend, err := sfc.receiver.GetLogs(goDotEnvVariable(lastPassApiKey), lastTime, customerId)
 	if err != nil {
 		// print it out
 		fmt.Println(err)

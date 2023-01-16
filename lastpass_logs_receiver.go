@@ -58,6 +58,7 @@ func lastpass_logs_receiver() []LogToSend {
 	lastTimeEvent := ""
 	lastPassApiKey := os.Getenv("LASTPASS_KEY")
 	customerId := os.Getenv("CUSTOMER_ID")
+	enterpriseUrl := os.Getenv("LASTPASS_URL")
 
 	arrtoSend := fmt.Sprintf(`{
 		"cid": %s,
@@ -269,7 +270,9 @@ func (slr *LastPassLogsReceiver) getLogs(lastPassApiKey string) ([]byte, error) 
 
 	// lastPassApiKey := os.Getenv("LASTPASS_KEY")
 	customerId := os.Getenv("CUSTOMER_ID")
-	enterpriseUrl := ""
+	// LASTPASS_API_URL = "https://lastpass.com/enterpriseapi.php"
+
+	enterpriseUrl := os.Getenv("LASTPASS_URL")
 	arrtoSend := fmt.Sprintf(`{
 		"cid": %s,
 		"provhash": "%s",

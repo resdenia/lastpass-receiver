@@ -1,4 +1,4 @@
-package main
+package lastpass_logs_receiver
 
 import (
 	"bytes"

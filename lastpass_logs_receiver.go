@@ -276,7 +276,7 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 		}`, customerId, lastPassApiKey, lastTimeEvent, time.Now())
 	jsonStr := []byte(arrtoSend)
 
-	req, err := http.NewRequest(http.MethodPost, enterpriseUrl, bytes.NewReader(jsonStr))
+	req, err := http.NewRequest(http.MethodPost, enterpriseUrl, bytes.NewBuffer(jsonStr))
 	if err != nil {
 		fmt.Println(err)
 		panic(err)
@@ -316,11 +316,8 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 				panic(err)
 			}
 			for key, value := range data.Data {
-				fmt.Println(key)
-
 				var logToSend LogToSend = parseLog(key, value)
 				dataToSend = append(dataToSend, logToSend)
-				fmt.Println(key)
 
 			}
 

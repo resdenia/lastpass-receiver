@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/logzio/logzio-go"
 	receiver "github.com/resdenia/lastpass-receiver"
 )
@@ -19,7 +20,7 @@ const (
 	envNameInterval          = "INTERVAL"
 	envNameLogzioListenerURL = "LOGZIO_LISTENER_URL"
 	envNameLogzioToken       = "LOGZIO_TOKEN"
-	lastPassApiKey           = "LAST_PASS_API_KEY"
+	lastPassApiKey           = "LASTPASS_KEY"
 	defaultInterval          = 5
 	defaultLogzioListenerURL = "https://listener.logz.io:8071"
 	enterpriseUrl            = "https://lastpass.com/enterpriseapi.php"
@@ -37,10 +38,22 @@ type lastPassCollector struct {
 	interval int
 }
 
+func goDotEnvVariable(key string) string {
+
+	// load .env file
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	return os.Getenv(key)
+}
+
 func newLastPassCollector() (*lastPassCollector, error) {
 	rec, err := createLastPassReceiver()
 	if err != nil {
-		return nil, fmt.Errorf("error creating Salesforce receiver: %w", err)
+		return nil, fmt.Errorf("error creating LastPass receiver: %w", err)
 	}
 
 	shipper, err := createLogzioSender()
@@ -48,7 +61,7 @@ func newLastPassCollector() (*lastPassCollector, error) {
 		return nil, fmt.Errorf("error creating Logz.io sender: %w", err)
 	}
 
-	intervalStr := os.Getenv(envNameInterval)
+	intervalStr := goDotEnvVariable(envNameInterval)
 	interval, err := strconv.Atoi(intervalStr)
 	if err != nil {
 		infoLogger.Println("Interval is not a number. Used default value -", defaultInterval, "seconds")
@@ -95,10 +108,10 @@ func createLastPassReceiver() (*receiver.LastPassLogsReceiver, error) {
 	// 		customFields[fieldKeyAndValue[0]] = fieldKeyAndValue[1]
 	// 	}
 	// }
-
+	fmt.Println(goDotEnvVariable(lastPassApiKey))
 	rec, err := receiver.NewLastPassLogsReceiver(
 		enterpriseUrl,
-		os.Getenv(lastPassApiKey),
+		goDotEnvVariable(lastPassApiKey),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("error creating Salesforce logs receiver object: %w", err)
@@ -108,12 +121,12 @@ func createLastPassReceiver() (*receiver.LastPassLogsReceiver, error) {
 }
 
 func createLogzioSender() (*logzio.LogzioSender, error) {
-	logzioListenerURL := os.Getenv(envNameLogzioListenerURL)
+	logzioListenerURL := goDotEnvVariable(envNameLogzioListenerURL)
 	if logzioListenerURL == "" {
 		logzioListenerURL = defaultLogzioListenerURL
 	}
 
-	logzioToken := os.Getenv(envNameLogzioToken)
+	logzioToken := goDotEnvVariable(envNameLogzioToken)
 	if logzioToken == "" {
 		return nil, fmt.Errorf("Logz.io token must have a value")
 	}
@@ -186,14 +199,19 @@ func (sfc *lastPassCollector) collect(lastTime string) {
 	// 	}(sObject)
 	// }
 
-	logsToSend := sfc.receiver.GetLogs(lastPassApiKey, lastTime)
-	for _, log := range logsToSend {
+	logsToSend, err := sfc.receiver.GetLogs(goDotEnvVariable(lastPassApiKey), lastTime)
+	if err != nil {
+		// print it out
+		fmt.Println(err)
+	}
 
+	for _, log := range logsToSend {
+		fmt.Println(log)
 	}
 	dataLastTime := []byte(lastTime)
 
 	// the WriteFile method returns an error if unsuccessful
-	err := ioutil.WriteFile("lastTime.txt", dataLastTime, 0777)
+	err = ioutil.WriteFile("lastTime.txt", dataLastTime, 0777)
 	// handle this error
 	if err != nil {
 		// print it out

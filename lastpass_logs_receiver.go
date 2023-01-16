@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -248,7 +247,7 @@ func NewLastPassLogsReceiver(
 // 	return logEvents, nil
 // }
 
-func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent string) ([]byte, error) {
+func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent string) ([]LogToSend, error) {
 	// httpClient := &http.Client{}
 	// req, err := http.NewRequest("GET", fmt.Sprintf("%s%s", strings.TrimRight(slr.client.GetLoc(), "/"), apiPath), nil)
 	// req.Header.Add("Content-Type", "application/json; charset=UTF-8")
@@ -289,7 +288,8 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 		fmt.Println(err)
 		panic(err)
 	}
-	var resp *http.Response
+	dataToSend := []LogToSend{}
+	// var resp *http.Response
 	err = retry.Do(
 		func() error {
 			resp, err := client.Do(req)
@@ -315,7 +315,6 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 				fmt.Println(err)
 				panic(err)
 			}
-			dataToSend := []LogToSend{}
 			for key, value := range data.Data {
 				fmt.Println(key)
 
@@ -352,13 +351,7 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 		return nil, err
 	}
 
-	var content []byte
-	content, err = io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return content, nil
+	return dataToSend, nil
 }
 
 // func addEventLogToJsonData(eventLog map[string]interface{}, jsonData []byte) ([]byte, error) {

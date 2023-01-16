@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/avast/retry-go"
-	// "github.com/simpleforce/simpleforce"
 )
 
 type Log struct {
@@ -133,7 +132,7 @@ const (
 	defaultApiVersion       = "55.0"
 )
 
-type LastpassLogsReceiver struct {
+type LastPassLogsReceiver struct {
 	securityToken           string
 	client                  http.Client
 	currentTimeMinusOneHour string
@@ -144,10 +143,10 @@ type SObjectToCollect struct {
 	LatestTimestamp string
 }
 
-func NewLastpassLogsReceiver(
+func NewLastPassLogsReceiver(
 	url string,
 	securityToken string,
-) (*LastpassLogsReceiver, error) {
+) (*LastPassLogsReceiver, error) {
 	if securityToken == "" {
 		return nil, fmt.Errorf("security token must have a value")
 	}
@@ -156,14 +155,14 @@ func NewLastpassLogsReceiver(
 
 	client := http.Client{}
 
-	return &LastpassLogsReceiver{
+	return &LastPassLogsReceiver{
 		securityToken:           securityToken,
 		client:                  client,
 		currentTimeMinusOneHour: currentTimeMinusOneHour,
 	}, nil
 }
 
-// func (slr *LastpassLogsReceiver) GetSObjectRecords() ([]LogToSend, error) {
+// func (slr *LastPassLogsReceiver) GetSObjectRecords() ([]LogToSend, error) {
 // 	query := fmt.Sprintf("SELECT Id,CreatedDate FROM %s WHERE CreatedDate > %s ORDER BY CreatedDate", sObject.SObjectType, sObject.LatestTimestamp)
 // 	result, err := slr.client.Query(query)
 // 	if err != nil {
@@ -174,7 +173,7 @@ func NewLastpassLogsReceiver(
 // 	return result.Records, nil
 // }
 
-// func (slr *LastpassLogsReceiver) CollectSObjectRecord(record *simpleforce.SObject) ([]byte, *string, error) {
+// func (slr *LastPassLogsReceiver) CollectSObjectRecord(record *simpleforce.SObject) ([]byte, *string, error) {
 // 	id := record.ID()
 // 	data := record.Get(id)
 
@@ -195,7 +194,7 @@ func NewLastpassLogsReceiver(
 // 	return jsonData, &createdDate, nil
 // }
 
-// func (slr *LastpassLogsReceiver) EnrichEventLogFileSObjectData(data *simpleforce.SObject, jsonData []byte) ([][]byte, error) {
+// func (slr *LastPassLogsReceiver) EnrichEventLogFileSObjectData(data *simpleforce.SObject, jsonData []byte) ([][]byte, error) {
 // 	eventLogRows, err := slr.getEventLogFileContent(data)
 // 	if err != nil {
 // 		return nil, fmt.Errorf("error getting EventLogFile sObject log file content: %w", err)
@@ -217,7 +216,7 @@ func NewLastpassLogsReceiver(
 // 	return jsonsData, nil
 // }
 
-// func (slr *LastpassLogsReceiver) getEventLogFileContent(data *simpleforce.SObject) ([]map[string]interface{}, error) {
+// func (slr *LastPassLogsReceiver) getEventLogFileContent(data *simpleforce.SObject) ([]map[string]interface{}, error) {
 // 	apiPath := data.StringField("LogFile")
 // 	logFileContent, err := slr.getFileContent(apiPath)
 // 	if err != nil {
@@ -253,7 +252,7 @@ func NewLastpassLogsReceiver(
 // 	return logEvents, nil
 // }
 
-func (slr *LastpassLogsReceiver) getLogs(lastPassApiKey string) ([]byte, error) {
+func (slr *LastPassLogsReceiver) getLogs(lastPassApiKey string) ([]byte, error) {
 	// httpClient := &http.Client{}
 	// req, err := http.NewRequest("GET", fmt.Sprintf("%s%s", strings.TrimRight(slr.client.GetLoc(), "/"), apiPath), nil)
 	// req.Header.Add("Content-Type", "application/json; charset=UTF-8")

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/avast/retry-go"
@@ -204,7 +205,7 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 		fmt.Println(err)
 	}
 
-	req, err := http.NewRequest(http.MethodPost, enterpriseUrl, payloadBuf)
+	req, err := http.NewRequest(http.MethodPost, enterpriseUrl, strings.NewReader(`{"url": "https://www.google.com/"}`))
 	if err != nil {
 		fmt.Println(err)
 		panic(err)

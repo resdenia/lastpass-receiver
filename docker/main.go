@@ -186,7 +186,7 @@ func (sfc *lastPassCollector) collect(lastTime string) {
 	// 	}(sObject)
 	// }
 
-	logsToSend := sfc.receiver.getLogs(lastPassApiKey, lastTime)
+	logsToSend := sfc.receiver.GetLogs(lastPassApiKey, lastTime)
 	for _, log := range logsToSend {
 
 	}

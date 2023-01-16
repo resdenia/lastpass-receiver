@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/logzio/logzio-go v1.0.6
-	github.com/resdenia/lastpass-receiver v0.0.0-20230116083048-22fba6d2d3fc
+	github.com/resdenia/lastpass-receiver v1.0.0
 )
 
 require (

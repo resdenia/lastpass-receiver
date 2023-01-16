@@ -248,7 +248,7 @@ func NewLastPassLogsReceiver(
 // 	return logEvents, nil
 // }
 
-func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string) ([]byte, error) {
+func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent string) ([]byte, error) {
 	// httpClient := &http.Client{}
 	// req, err := http.NewRequest("GET", fmt.Sprintf("%s%s", strings.TrimRight(slr.client.GetLoc(), "/"), apiPath), nil)
 	// req.Header.Add("Content-Type", "application/json; charset=UTF-8")
@@ -260,8 +260,6 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string) ([]byte, error) 
 		Next   string         `json:"next"`
 		Data   map[string]Log `json:"data"`
 	}
-
-	lastTimeEvent := ""
 
 	// lastPassApiKey := os.Getenv("LASTPASS_KEY")
 	customerId := os.Getenv("CUSTOMER_ID")

@@ -29,6 +29,8 @@ github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c h1:ncq/mPwQF
 github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c/go.mod h1:OmDBASR4679mdNQnz2pUhc2G8CO2JrUAVFDRBDP/hJE=
 github.com/resdenia/lastpass-receiver v0.0.0-20230116083048-22fba6d2d3fc h1:/KaLrRMG2Q+Pqd1uHVcuxavazgso+5R01kEtJxuGDBs=
 github.com/resdenia/lastpass-receiver v0.0.0-20230116083048-22fba6d2d3fc/go.mod h1:+jhwxLIB1PoQazHcKh7IBNGaSXI2Z8QOVwPEM+jAaaI=
+github.com/resdenia/lastpass-receiver v1.0.0 h1:9H01K85yxJ27zThyQprrINri9yl9ttAXuYRo6vhTCNg=
+github.com/resdenia/lastpass-receiver v1.0.0/go.mod h1:EE5/uaZVZ1YVFVsWjbkaEzjV3euTS0cToyLTFlggvTw=
 github.com/shirou/gopsutil/v3 v3.22.3 h1:UebRzEomgMpv61e3hgD1tGooqX5trFbdU/ehphbHd00=
 github.com/shirou/gopsutil/v3 v3.22.3/go.mod h1:D01hZJ4pVHPpCTZ3m3T2+wDF2YAGfd+H4ifUguaQzHM=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=

@@ -138,6 +138,17 @@ type LastPassLogsReceiver struct {
 	currentTimeMinusOneHour string
 }
 
+type RequestBody struct {
+	cid      int
+	provhash string
+	cmd      string
+	data     FilterDate
+}
+type FilterDate struct {
+	from string
+	to   string
+}
+
 func NewLastPassLogsReceiver(
 	url string,
 	securityToken string,
@@ -184,12 +195,12 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 			"to": "%s",
 		},
 		}`, customerId, lastPassApiKey, lastTimeEvent, time.Now())
-	fmt.Println(arrtoSend)
+	requestBody := RequestBody{}
+	json.Unmarshal([]byte(arrtoSend), &requestBody)
 
-	jsonStr := []byte(arrtoSend)
-	fmt.Println(jsonStr)
-
-	req, err := http.NewRequest(http.MethodPost, enterpriseUrl, bytes.NewBuffer(jsonStr))
+	payloadBuf := new(bytes.Buffer)
+	json.NewEncoder(payloadBuf).Encode(requestBody)
+	req, err := http.NewRequest(http.MethodPost, enterpriseUrl, payloadBuf)
 	if err != nil {
 		fmt.Println(err)
 		panic(err)

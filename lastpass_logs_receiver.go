@@ -157,96 +157,6 @@ func NewLastPassLogsReceiver(
 	}, nil
 }
 
-// func (slr *LastPassLogsReceiver) GetSObjectRecords() ([]LogToSend, error) {
-// 	query := fmt.Sprintf("SELECT Id,CreatedDate FROM %s WHERE CreatedDate > %s ORDER BY CreatedDate", sObject.SObjectType, sObject.LatestTimestamp)
-// 	result, err := slr.client.Query(query)
-// 	if err != nil {
-// 		return nil, fmt.Errorf("error querying Lastpass API: %w", err)
-// 	}
-
-// 	debugLogger.Println("Got", len(result.Records), "records of sObject", sObject.SObjectType)
-// 	return result.Records, nil
-// }
-
-// func (slr *LastPassLogsReceiver) CollectSObjectRecord(record *simpleforce.SObject) ([]byte, *string, error) {
-// 	id := record.ID()
-// 	data := record.Get(id)
-
-// 	jsonData, err := json.Marshal(data)
-// 	if err != nil {
-// 		return nil, nil, fmt.Errorf("error marshaling data from Lastpass API: %w", err)
-// 	}
-
-// 	// jsonData, err = slr.addCustomFields(jsonData, record.Type(), id)
-// 	if err != nil {
-// 		return nil, nil, fmt.Errorf("error adding custom fields to data: %w", err)
-// 	}
-
-// 	createdDate := record.StringField("CreatedDate")
-// 	createdDate = strings.Replace(createdDate, "+0000", "Z", 1)
-
-// 	debugLogger.Println("Collected data of sObject", record.Type(), "record ID", id)
-// 	return jsonData, &createdDate, nil
-// }
-
-// func (slr *LastPassLogsReceiver) EnrichEventLogFileSObjectData(data *simpleforce.SObject, jsonData []byte) ([][]byte, error) {
-// 	eventLogRows, err := slr.getEventLogFileContent(data)
-// 	if err != nil {
-// 		return nil, fmt.Errorf("error getting EventLogFile sObject log file content: %w", err)
-// 	}
-
-// 	debugLogger.Println("Got", len(eventLogRows), "logs from EventLogFile sObject ID", data.ID())
-
-// 	var jsonsData [][]byte
-// 	for _, eventLogRow := range eventLogRows {
-// 		newJsonData, err := addEventLogToJsonData(eventLogRow, jsonData)
-// 		if err != nil {
-// 			return nil, fmt.Errorf("error adding event log content to JSON data: %w", err)
-// 		}
-
-// 		jsonsData = append(jsonsData, newJsonData)
-// 	}
-
-// 	debugLogger.Println("Enriched sObject data with", len(jsonsData), "logs from EventLogFile sObject ID", data.ID())
-// 	return jsonsData, nil
-// }
-
-// func (slr *LastPassLogsReceiver) getEventLogFileContent(data *simpleforce.SObject) ([]map[string]interface{}, error) {
-// 	apiPath := data.StringField("LogFile")
-// 	logFileContent, err := slr.getFileContent(apiPath)
-// 	if err != nil {
-// 		return nil, fmt.Errorf("error getting event log file content: %w", err)
-// 	}
-
-// 	trimmedLogFileContent := strings.Replace(string(logFileContent), "\n\n", "\n", -1)
-// 	debugLogger.Println("Got EventLogFile sObject log file content ID", data.ID())
-
-// 	reader := strings.NewReader(trimmedLogFileContent)
-// 	csvReader := csv.NewReader(reader)
-
-// 	csvData, err := csvReader.ReadAll()
-// 	if err != nil {
-// 		return nil, fmt.Errorf("error reading CSV data: %w", err)
-// 	}
-
-// 	var logEvents []map[string]interface{}
-// 	for rowIndex, row := range csvData {
-// 		if rowIndex == 0 {
-// 			continue
-// 		}
-
-// 		logEvent := make(map[string]interface{})
-// 		for fieldIndex, field := range row {
-// 			key := csvData[0][fieldIndex]
-// 			logEvent[key] = field
-// 		}
-
-// 		logEvents = append(logEvents, logEvent)
-// 	}
-
-// 	return logEvents, nil
-// }
-
 func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent string) ([]LogToSend, error) {
 	// httpClient := &http.Client{}
 	// req, err := http.NewRequest("GET", fmt.Sprintf("%s%s", strings.TrimRight(slr.client.GetLoc(), "/"), apiPath), nil)
@@ -271,10 +181,13 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 		"cmd": "reporting",
 		"data": {
 			"from": "%s",
-			"to": "%s"
-		}
+			"to": "%s",
+		},
 		}`, customerId, lastPassApiKey, lastTimeEvent, time.Now())
+	fmt.Println(arrtoSend)
+
 	jsonStr := []byte(arrtoSend)
+	fmt.Println(jsonStr)
 
 	req, err := http.NewRequest(http.MethodPost, enterpriseUrl, bytes.NewBuffer(jsonStr))
 	if err != nil {

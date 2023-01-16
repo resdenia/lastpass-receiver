@@ -1,0 +1,4 @@
+github.com/avast/retry-go v3.0.0+incompatible h1:4SOWQ7Qs+oroOTQOYnAHqelpCO0biHSxpiH9JdtuBj0=
+github.com/avast/retry-go v3.0.0+incompatible/go.mod h1:XtSnn+n/sHqQIpZ10K1qAevBhOOCWBLXXy3hyiqqBrY=
+github.com/resdenia/lastpass-receiver v0.0.0-20230116083048-22fba6d2d3fc h1:/KaLrRMG2Q+Pqd1uHVcuxavazgso+5R01kEtJxuGDBs=
+github.com/resdenia/lastpass-receiver v0.0.0-20230116083048-22fba6d2d3fc/go.mod h1:+jhwxLIB1PoQazHcKh7IBNGaSXI2Z8QOVwPEM+jAaaI=

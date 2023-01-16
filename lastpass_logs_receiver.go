@@ -48,72 +48,72 @@ type logzioHandler struct {
 	dataBuffer bytes.Buffer
 }
 
-func lastpass_logs_receiver() []LogToSend {
-	var data struct {
-		Status string         `json:"status"`
-		Next   string         `json:"next"`
-		Data   map[string]Log `json:"data"`
-	}
+// func lastpass_logs_receiver() []LogToSend {
+// 	var data struct {
+// 		Status string         `json:"status"`
+// 		Next   string         `json:"next"`
+// 		Data   map[string]Log `json:"data"`
+// 	}
 
-	lastTimeEvent := ""
-	lastPassApiKey := os.Getenv("LASTPASS_KEY")
-	customerId := os.Getenv("CUSTOMER_ID")
-	enterpriseUrl := os.Getenv("LASTPASS_URL")
+// 	lastTimeEvent := ""
+// 	lastPassApiKey := os.Getenv("LASTPASS_KEY")
+// 	customerId := os.Getenv("CUSTOMER_ID")
+// 	enterpriseUrl := os.Getenv("LASTPASS_URL")
 
-	arrtoSend := fmt.Sprintf(`{
-		"cid": %s,
-		"provhash": "%s",
-		"cmd": "reporting",
-		"data": {
-			"from": "%s",
-			"to": "%s"
-		}
-		}`, customerId, lastPassApiKey, lastTimeEvent, time.Now())
-	jsonStr := []byte(arrtoSend)
+// 	arrtoSend := fmt.Sprintf(`{
+// 		"cid": %s,
+// 		"provhash": "%s",
+// 		"cmd": "reporting",
+// 		"data": {
+// 			"from": "%s",
+// 			"to": "%s"
+// 		}
+// 		}`, customerId, lastPassApiKey, lastTimeEvent, time.Now())
+// 	jsonStr := []byte(arrtoSend)
 
-	req, err := http.NewRequest(http.MethodPost, enterpriseUrl, bytes.NewReader(jsonStr))
-	if err != nil {
-		fmt.Println(err)
-		panic(err)
-	}
-	req.Header.Set("Content-Type", "application/json")
+// 	req, err := http.NewRequest(http.MethodPost, enterpriseUrl, bytes.NewReader(jsonStr))
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		panic(err)
+// 	}
+// 	req.Header.Set("Content-Type", "application/json")
 
-	client := http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		panic(err)
-	}
-	defer resp.Body.Close()
+// 	client := http.Client{}
+// 	resp, err := client.Do(req)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		panic(err)
+// 	}
+// 	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
-	errr := json.Unmarshal(body, &data)
-	if errr != nil {
-		panic(errr)
-	}
-	// Marshal back to json (as original)
-	// out, _ := json.Marshal(&data)
-	// fmt.Println(out))
-	json.NewDecoder(resp.Body).Decode(&data)
+// 	body, _ := ioutil.ReadAll(resp.Body)
+// 	errr := json.Unmarshal(body, &data)
+// 	if errr != nil {
+// 		panic(errr)
+// 	}
+// 	// Marshal back to json (as original)
+// 	// out, _ := json.Marshal(&data)
+// 	// fmt.Println(out))
+// 	json.NewDecoder(resp.Body).Decode(&data)
 
-	if err != nil {
-		fmt.Println(err)
-		panic(err)
-	}
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		panic(err)
+// 	}
 
-	dataToSend := []LogToSend{}
+// 	dataToSend := []LogToSend{}
 
-	for key, value := range data.Data {
-		fmt.Println(key)
+// 	for key, value := range data.Data {
+// 		fmt.Println(key)
 
-		var logToSend LogToSend = parseLog(key, value)
-		dataToSend = append(dataToSend, logToSend)
-		fmt.Println(key)
+// 		var logToSend LogToSend = parseLog(key, value)
+// 		dataToSend = append(dataToSend, logToSend)
+// 		fmt.Println(key)
 
-	}
-	return dataToSend
+// 	}
+// 	return dataToSend
 
-}
+// }
 
 func parseLog(logName string, fields Log) LogToSend {
 	var logToSend LogToSend
@@ -137,11 +137,6 @@ type LastPassLogsReceiver struct {
 	securityToken           string
 	client                  http.Client
 	currentTimeMinusOneHour string
-}
-
-type SObjectToCollect struct {
-	SObjectType     string
-	LatestTimestamp string
 }
 
 func NewLastPassLogsReceiver(
@@ -368,18 +363,18 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string) ([]byte, error) 
 	return content, nil
 }
 
-func addEventLogToJsonData(eventLog map[string]interface{}, jsonData []byte) ([]byte, error) {
-	var jsonMap map[string]interface{}
-	if err := json.Unmarshal(jsonData, &jsonMap); err != nil {
-		return nil, fmt.Errorf("error unmarshaling JSON data: %w", err)
-	}
+// func addEventLogToJsonData(eventLog map[string]interface{}, jsonData []byte) ([]byte, error) {
+// 	var jsonMap map[string]interface{}
+// 	if err := json.Unmarshal(jsonData, &jsonMap); err != nil {
+// 		return nil, fmt.Errorf("error unmarshaling JSON data: %w", err)
+// 	}
 
-	jsonMap["LogFileContent"] = eventLog
+// 	jsonMap["LogFileContent"] = eventLog
 
-	newJsonData, err := json.Marshal(jsonMap)
-	if err != nil {
-		return nil, fmt.Errorf("error marshaling JSON data: %w", err)
-	}
+// 	newJsonData, err := json.Marshal(jsonMap)
+// 	if err != nil {
+// 		return nil, fmt.Errorf("error marshaling JSON data: %w", err)
+// 	}
 
-	return newJsonData, nil
-}
+// 	return newJsonData, nil
+// }

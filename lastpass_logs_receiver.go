@@ -183,11 +183,19 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 	}
 
 	// lastPassApiKey := os.Getenv("LASTPASS_KEY")
-	// customerId := os.Getenv("CUSTOMER_ID")
+	customerId := os.Getenv("CUSTOMER_ID")
 	// LASTPASS_API_URL = "https://lastpass.com/enterpriseapi.php"
 
 	enterpriseUrl := os.Getenv("LASTPASS_URL")
-	// arrtoSend :=
+	arrtoSend := fmt.Sprintf(`{
+		"cid": "%s",
+		"provhash": "%s",
+		"cmd": "reporting",
+		"data": {
+			"from": "%s",
+			"to": "%s",
+		},
+		}`, customerId, lastPassApiKey, lastTimeEvent, time.Now())
 	// requestBody := RequestBody{}
 	// json.Unmarshal([]byte(arrtoSend), &requestBody)
 
@@ -197,10 +205,7 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 	// 	fmt.Println(err)
 	// }
 
-	req, err := http.NewRequest(http.MethodPost, enterpriseUrl, strings.NewReader(fmt.Sprintf(`{
-		"provhash": "%s",
-		
-		}`, lastPassApiKey)))
+	req, err := http.NewRequest(http.MethodPost, enterpriseUrl, strings.NewReader(arrtoSend))
 	if err != nil {
 		fmt.Println(err)
 		panic(err)

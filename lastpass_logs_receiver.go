@@ -198,14 +198,9 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 	// }
 
 	req, err := http.NewRequest(http.MethodPost, enterpriseUrl, strings.NewReader(fmt.Sprintf(`{
-		"cid": %s,
 		"provhash": "%s",
-		"cmd": "reporting",
-		"data": {
-			"from": "%s",
-			"to": "%s",
-		},
-		}`, customerId, lastPassApiKey, lastTimeEvent, time.Now())))
+		
+		}`, lastPassApiKey)))
 	if err != nil {
 		fmt.Println(err)
 		panic(err)

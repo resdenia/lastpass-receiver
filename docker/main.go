@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -156,49 +157,6 @@ func (sfc *lastPassCollector) sendDataToLogzio(data []byte) bool {
 func (sfc *lastPassCollector) collect(lastTime string) {
 	var waitGroup sync.WaitGroup
 
-	// for _, sObject := range sfc.receiver.SObjects {
-	// 	debugLogger.Println("sObject type:", sObject.SObjectType, "- from timestamp:", sObject.LatestTimestamp)
-	// 	waitGroup.Add(1)
-
-	// 	go func(sObject *receiver.SObjectToCollect) {
-	// 		defer waitGroup.Done()
-
-	// 		records, err := sfc.receiver.GetSObjectRecords(sObject)
-	// 		if err != nil {
-	// 			errorLogger.Println("error getting sObject ", sObject.SObjectType, " records: ", err)
-	// 			return
-	// 		}
-
-	// 		for _, record := range records {
-	// 			data, createdDate, err := sfc.receiver.CollectSObjectRecord(&record)
-	// 			if err != nil {
-	// 				errorLogger.Println("error collecting sObject ", sObject.SObjectType, " record ID ", record.ID(), ": ", err)
-	// 				return
-	// 			}
-
-	// 			if strings.ToLower(sObject.SObjectType) == receiver.EventLogFileSObjectName {
-	// 				enrichedData, err := sfc.receiver.EnrichEventLogFileSObjectData(&record, data)
-	// 				if err != nil {
-	// 					errorLogger.Println("error enriching EventLogFile sObject ", " record ID ", record.ID(), ": ", err)
-	// 					return
-	// 				}
-
-	// 				for _, data = range enrichedData {
-	// 					if !sfc.sendDataToLogzio(data, sObject.SObjectType, record.ID()) {
-	// 						return
-	// 					}
-	// 				}
-	// 			} else {
-	// 				if !sfc.sendDataToLogzio(data, sObject.SObjectType, record.ID()) {
-	// 					return
-	// 				}
-	// 			}
-
-	// 			sObject.LatestTimestamp = *createdDate
-	// 		}
-	// 	}(sObject)
-	// }
-
 	logsToSend, err := sfc.receiver.GetLogs(goDotEnvVariable(lastPassApiKey), lastTime)
 	if err != nil {
 		// print it out
@@ -206,6 +164,9 @@ func (sfc *lastPassCollector) collect(lastTime string) {
 	}
 
 	for _, log := range logsToSend {
+		byteLog, _ := json.Marshal(log)
+
+		sfc.sendDataToLogzio(byteLog)
 		fmt.Println(log)
 	}
 	dataLastTime := []byte(lastTime)

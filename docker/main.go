@@ -133,26 +133,22 @@ func (sfc *lastPassCollector) collect(lastTime string) {
 	customerIDStr := goDotEnvVariable(envNameCustomerId)
 	customerId, err := strconv.Atoi(customerIDStr)
 	if err != nil {
-		// print it out
 		errorLogger.Println(err)
 	}
-	go func() {
-		defer waitGroup.Done()
 
-		logsToSend, err := sfc.receiver.GetLogs(goDotEnvVariable(lastPassApiKey), lastTime, customerId)
-		if err != nil {
-			// print it out
-			errorLogger.Println(err)
-		}
+	logsToSend, err := sfc.receiver.GetLogs(goDotEnvVariable(lastPassApiKey), lastTime, customerId)
+	if err != nil {
+		errorLogger.Println(err)
+	}
 
+	for _, log := range logsToSend {
 		waitGroup.Add(1)
-		for _, log := range logsToSend {
-			byteLog, _ := json.Marshal(log)
-
+		byteLog, _ := json.Marshal(log)
+		go func() {
+			defer waitGroup.Done()
 			sfc.sendDataToLogzio(byteLog)
-		}
-
-	}()
+		}()
+	}
 
 	waitGroup.Wait()
 }

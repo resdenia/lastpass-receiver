@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -13,7 +14,8 @@ import (
 	"github.com/avast/retry-go"
 )
 
-const enterpriseUrl = "https://lastpass.com/enterpriseapi.php"
+// const enterpriseUrl = "https://lastpass.com/enterpriseapi.php"
+const enterpriseUrl = os.Getenv("LASTPASS_URL")
 
 type Log struct {
 	Time       string

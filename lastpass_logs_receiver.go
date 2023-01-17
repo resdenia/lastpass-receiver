@@ -76,14 +76,11 @@ func NewLastPassLogsReceiver(
 		return nil, fmt.Errorf("security token must have a value")
 	}
 
-	currentTime := time.Now().Format("2006-01-02 15:04:05")
-
 	client := http.Client{}
 
 	return &LastPassLogsReceiver{
 		securityToken: securityToken,
 		client:        client,
-		currentTime:   currentTime,
 	}, nil
 }
 
@@ -94,8 +91,8 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 		Next   string         `json:"next"`
 		Data   map[string]Log `json:"data"`
 	}
-
-	arrtoSend := fmt.Sprintf(`{"cid": %d,"provhash": "%s","cmd": "reporting","data": {"from": "%s","to": "%s"}}`, customerId, lastPassApiKey, lastTimeEvent, slr.currentTime)
+	currentTime := time.Now().Format("2006-01-02 15:04:05")
+	arrtoSend := fmt.Sprintf(`{"cid": %d,"provhash": "%s","cmd": "reporting","data": {"from": "%s","to": "%s"}}`, customerId, lastPassApiKey, lastTimeEvent, currentTime)
 	enterpriseUrl := os.Getenv("LASTPASS_URL")
 
 	req, err := http.NewRequest(http.MethodPost, enterpriseUrl, strings.NewReader(arrtoSend))

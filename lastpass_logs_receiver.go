@@ -15,7 +15,6 @@ import (
 )
 
 // const enterpriseUrl = "https://lastpass.com/enterpriseapi.php"
-const enterpriseUrl = os.Getenv("LASTPASS_URL")
 
 type Log struct {
 	Time       string
@@ -24,6 +23,7 @@ type Log struct {
 	Action     string
 	Data       string
 }
+
 type LogToSend struct {
 	Name       string
 	Time       string
@@ -50,11 +50,6 @@ func parseLog(logName string, fields Log) LogToSend {
 	return logToSend
 
 }
-
-const (
-	EventLogFileSObjectName = "eventlogfile"
-	defaultApiVersion       = "55.0"
-)
 
 type LastPassLogsReceiver struct {
 	securityToken string
@@ -101,6 +96,7 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 	}
 
 	arrtoSend := fmt.Sprintf(`{"cid": %d,"provhash": "%s","cmd": "reporting","data": {"from": "%s","to": "%s"}}`, customerId, lastPassApiKey, lastTimeEvent, slr.currentTime)
+	enterpriseUrl := os.Getenv("LASTPASS_URL")
 
 	req, err := http.NewRequest(http.MethodPost, enterpriseUrl, strings.NewReader(arrtoSend))
 	if err != nil {

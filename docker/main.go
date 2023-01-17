@@ -26,6 +26,7 @@ const (
 	defaultInterval          = 5
 	defaultLogzioListenerURL = "https://listener.logz.io:8071"
 	enterpriseUrl            = "https://lastpass.com/enterpriseapi.php"
+	timeFormat               = "2006-01-02 15:04:05"
 )
 
 var (
@@ -46,7 +47,7 @@ func goDotEnvVariable(key string) string {
 	err := godotenv.Load(".env")
 
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		errorLogger.Println("Error loading .env file")
 	}
 
 	return os.Getenv(key)
@@ -121,7 +122,7 @@ func createLogzioSender() (*logzio.LogzioSender, error) {
 
 func (sfc *lastPassCollector) sendDataToLogzio(data []byte) bool {
 	if err := sfc.shipper.Send(data); err != nil {
-		errorLogger.Println("error sending sObject ", err)
+		errorLogger.Println("error sending lastPass report log ", err)
 		return false
 	}
 
@@ -132,27 +133,36 @@ func (sfc *lastPassCollector) collect(lastTime string) {
 	var waitGroup sync.WaitGroup
 	customerIDStr := goDotEnvVariable(envNameCustomerId)
 	customerId, err := strconv.Atoi(customerIDStr)
-	logsToSend, err := sfc.receiver.GetLogs(goDotEnvVariable(lastPassApiKey), lastTime, customerId)
 	if err != nil {
 		// print it out
-		fmt.Println(err)
+		errorLogger.Println(err)
 	}
+	go func() {
+		defer waitGroup.Done()
 
-	for _, log := range logsToSend {
-		byteLog, _ := json.Marshal(log)
+		logsToSend, err := sfc.receiver.GetLogs(goDotEnvVariable(lastPassApiKey), lastTime, customerId)
+		if err != nil {
+			// print it out
+			errorLogger.Println(err)
+		}
 
-		sfc.sendDataToLogzio(byteLog)
-		fmt.Println(log)
-	}
-	dataLastTime := []byte(lastTime)
+		waitGroup.Add(1)
+		for _, log := range logsToSend {
+			byteLog, _ := json.Marshal(log)
 
-	// the WriteFile method returns an error if unsuccessful
-	err = ioutil.WriteFile("lastTime.txt", dataLastTime, 0777)
-	// handle this error
-	if err != nil {
-		// print it out
-		fmt.Println(err)
-	}
+			sfc.sendDataToLogzio(byteLog)
+		}
+		dataLastTime := []byte(lastTime)
+
+		// the WriteFile method returns an error if unsuccessful
+		err = ioutil.WriteFile("lastTime.txt", dataLastTime, 0777)
+		// handle this error
+		if err != nil {
+			// print it out
+			errorLogger.Println(err)
+		}
+	}()
+
 	waitGroup.Wait()
 }
 
@@ -161,14 +171,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	lastTime := time.Now().Format("2006-01-02 15:04:05")
-	// lastTime := time.Now().Unix()
+	lastTime := time.Now().Format(timeFormat)
 	for {
 		collector.collect(lastTime)
 		debugLogger.Println("Finished collecting. Collector will run in", collector.interval, "seconds")
-		lastTime = time.Now().Format("2006-01-02 15:04:05")
+		lastTime = time.Now().Format(timeFormat)
 
-		// lastTime := time.Now().Unix()
 		time.Sleep(time.Duration(collector.interval) * time.Second)
 	}
 }

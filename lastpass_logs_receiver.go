@@ -39,7 +39,6 @@ type JsonData struct {
 
 func parseLog(logName string, fields Log) LogToSend {
 	var logToSend LogToSend
-
 	logToSend.Name = logName
 	logToSend.Action = fields.Action
 	logToSend.Time = fields.Time
@@ -56,9 +55,9 @@ const (
 )
 
 type LastPassLogsReceiver struct {
-	securityToken           string
-	client                  http.Client
-	currentTimeMinusOneHour string
+	securityToken string
+	client        http.Client
+	currentTime   string
 }
 
 type RequestBody struct {
@@ -80,14 +79,14 @@ func NewLastPassLogsReceiver(
 		return nil, fmt.Errorf("security token must have a value")
 	}
 
-	currentTimeMinusOneHour := time.Now().Format("2006-01-02 15:04:05")
+	currentTime := time.Now().Format("2006-01-02 15:04:05")
 
 	client := http.Client{}
 
 	return &LastPassLogsReceiver{
-		securityToken:           securityToken,
-		client:                  client,
-		currentTimeMinusOneHour: currentTimeMinusOneHour,
+		securityToken: securityToken,
+		client:        client,
+		currentTime:   currentTime,
 	}, nil
 }
 
@@ -99,7 +98,7 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 		Data   map[string]Log `json:"data"`
 	}
 
-	arrtoSend := fmt.Sprintf(`{"cid": %d,"provhash": "%s","cmd": "reporting","data": {"from": "%s","to": "%s"}}`, customerId, lastPassApiKey, lastTimeEvent, time.Now().Format("2006-01-02 15:04:05"))
+	arrtoSend := fmt.Sprintf(`{"cid": %d,"provhash": "%s","cmd": "reporting","data": {"from": "%s","to": "%s"}}`, customerId, lastPassApiKey, lastTimeEvent, slr.currentTime)
 
 	req, err := http.NewRequest(http.MethodPost, enterpriseUrl, strings.NewReader(arrtoSend))
 	if err != nil {
@@ -173,8 +172,6 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 }
 
 func addTimestamp(logToSend *LogToSend) {
-	times := strings.Replace(logToSend.Time, " ", "T", 1)
-	times = fmt.Sprintf("%s.000Z", times)
+	times := fmt.Sprintf("%s.000Z", strings.Replace(logToSend.Time, " ", "T", 1))
 	logToSend.timestamp = times
-
 }

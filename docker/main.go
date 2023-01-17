@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
@@ -152,15 +151,7 @@ func (sfc *lastPassCollector) collect(lastTime string) {
 
 			sfc.sendDataToLogzio(byteLog)
 		}
-		dataLastTime := []byte(lastTime)
 
-		// the WriteFile method returns an error if unsuccessful
-		err = ioutil.WriteFile("lastTime.txt", dataLastTime, 0777)
-		// handle this error
-		if err != nil {
-			// print it out
-			errorLogger.Println(err)
-		}
 	}()
 
 	waitGroup.Wait()

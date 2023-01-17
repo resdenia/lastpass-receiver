@@ -5,7 +5,7 @@ Send report logs from LastPass to logz.io.
 ## Usage
 
 ```shell
-docker pull logzio/logzio-salesforce-collector
+docker pull logzio/logzio-lastpass-collector
 ```
 
 ## Run The Docker Container
@@ -13,7 +13,6 @@ docker pull logzio/logzio-salesforce-collector
 ```shell
  docker run --name logzio-salesforce-collector \
  --env PROVISIONING_HASH="<<PROVISIONING_HASH>>" \
- --env CUSTOM_FIELDS="<<CUSTOM_FIELDS>>" \
  --env FROM_TIMESTAMP="<<FROM_TIMESTAMP>>" \
  --env INTERVAL="<<INTERVAL>>" \
  --env LOGZIO_LISTENER_URL="<<LOGZIO_LISTENER_URL>>" \
@@ -40,7 +39,7 @@ logzio/logzio-lastpass-collector
 
 ## Searching in Logz.io
 
-All logs will have the type `salesforce`.
+All logs will have the type `lastpass`.
 
 ## Changelog
 

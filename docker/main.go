@@ -83,34 +83,7 @@ func newLastPassCollector() (*lastPassCollector, error) {
 }
 
 func createLastPassReceiver() (*receiver.LastPassLogsReceiver, error) {
-	// sObjectTypesStr := os.Getenv(envNameSObjectTypes)
-	// sObjectTypes := strings.Split(strings.Replace(sObjectTypesStr, " ", "", -1), ",")
-	// latestTimestamp := os.Getenv(envNameFromTimestamp)
 
-	// var sObjects []*receiver.SObjectToCollect
-	// for _, sObjectType := range sObjectTypes {
-	// 	sObjects = append(sObjects, &receiver.SObjectToCollect{
-	// 		SObjectType:     sObjectType,
-	// 		LatestTimestamp: latestTimestamp,
-	// 	})
-	// }
-
-	// customFieldsStr := os.Getenv(envNameCustomFields)
-	// customFields := make(map[string]string)
-
-	// if customFieldsStr != "" {
-	// 	fields := strings.Split(customFieldsStr, ",")
-
-	// 	for _, field := range fields {
-	// 		if !strings.Contains(field, ":") {
-	// 			return nil, fmt.Errorf("each field in %s must have ':' separator between the field key and value", envNameCustomFields)
-	// 		}
-
-	// 		fieldKeyAndValue := strings.Split(field, ":")
-	// 		customFields[fieldKeyAndValue[0]] = fieldKeyAndValue[1]
-	// 	}
-	// }
-	fmt.Println(goDotEnvVariable(lastPassApiKey))
 	rec, err := receiver.NewLastPassLogsReceiver(
 		enterpriseUrl,
 		goDotEnvVariable(lastPassApiKey),
@@ -189,11 +162,13 @@ func main() {
 		panic(err)
 	}
 	lastTime := time.Now().Format("2006-01-02 15:04:05")
-
+	// lastTime := time.Now().Unix()
 	for {
 		collector.collect(lastTime)
 		debugLogger.Println("Finished collecting. Collector will run in", collector.interval, "seconds")
 		lastTime = time.Now().Format("2006-01-02 15:04:05")
+
+		// lastTime := time.Now().Unix()
 		time.Sleep(time.Duration(collector.interval) * time.Second)
 	}
 }

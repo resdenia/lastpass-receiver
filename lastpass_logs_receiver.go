@@ -187,7 +187,7 @@ func (slr *LastPassLogsReceiver) GetLogs(lastPassApiKey string, lastTimeEvent st
 	// LASTPASS_API_URL = "https://lastpass.com/enterpriseapi.php"
 
 	enterpriseUrl := os.Getenv("LASTPASS_URL")
-	arrtoSend := fmt.Sprintf(`{"cid": %d,"provhash": "%s","cmd": "reporting","data": {"from": "%s","to": "%s"}}`, customerId, lastPassApiKey, lastTimeEvent, time.Now())
+	arrtoSend := fmt.Sprintf(`{"cid": %d,"provhash": "%s","cmd": "reporting","data": {"from": "%s","to": "%s"}}`, customerId, lastPassApiKey, lastTimeEvent, time.Now().Format("2006-01-02 15:04:05"))
 	// requestBody := RequestBody{}
 	// json.Unmarshal([]byte(arrtoSend), &requestBody)
 

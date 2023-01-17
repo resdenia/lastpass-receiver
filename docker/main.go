@@ -173,6 +173,7 @@ func main() {
 	}
 	lastTime := time.Now().Format(timeFormat)
 	for {
+
 		collector.collect(lastTime)
 		debugLogger.Println("Finished collecting. Collector will run in", collector.interval, "seconds")
 		lastTime = time.Now().Format(timeFormat)
